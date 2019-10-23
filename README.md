@@ -25,4 +25,6 @@ does not appear on my 12.9" iPad Pro (2nd gen), or the 12.9" iPad Pro (3rd gen) 
 5. note the cell disappears when it should stay visible
 6. note the logs show that elements are always returned for `layoutAttributesForElementsInRect:`
 
+### Recording
 
+![CollectionViewDisappearingCells.gif](CollectionViewDisappearingCells.gif)
