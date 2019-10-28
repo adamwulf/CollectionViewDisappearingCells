@@ -52,6 +52,12 @@
         for (NSInteger row=0; row<20; row++) {
             UICollectionViewLayoutAttributes *itemAttrs = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
             CGRect frame = [[frames objectAtIndex:row] CGRectValue];
+
+            frame.origin.x = round(frame.origin.x);
+            frame.origin.y = round(frame.origin.y);
+            frame.size.width = round(frame.size.width);
+            frame.size.height = round(frame.size.height);
+
             [itemAttrs setFrame:frame];
 
             CGSize itemSize = frame.size;
