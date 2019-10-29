@@ -12,8 +12,12 @@
     NSMutableArray<UICollectionViewLayoutAttributes*>*_cache;
 }
 
++(CGSize)itemSize{
+    return CGSizeMake(834, 1079.2941176470588);
+}
+
 -(CGSize)collectionViewContentSize{
-    return CGSizeMake(1962.7766201843365, 49674.129492655797);
+    return CGSizeMake(CGRectGetWidth([[self collectionView] bounds]), [[self class] itemSize].height * 20);
 }
 
 -(BOOL)shouldInvalidateLayoutForBoundsChange:(CGRect)newBounds{
@@ -24,48 +28,30 @@
 {
     if(!_cache){
         _cache = [NSMutableArray array];
-        
-        NSMutableArray *frames = [NSMutableArray array];
-        [frames addObject:@(CGRectMake(280.3966600263337,-220.3966600263337,595.7142857142858,834))];
-        [frames addObject:@(CGRectMake(0,1461.983300131669,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,4209.87056838974,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,6957.75783664781,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,9705.645104905881,834,1167.6))];
-        [frames addObject:@(CGRectMake(280.3966600263337,12173.13571313762,595.7142857142858,834))];
-        [frames addObject:@(CGRectMake(0,13855.51567329562,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,16603.40294155369,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,19351.29020981176,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,22099.17747806983,834,1167.6))];
-        [frames addObject:@(CGRectMake(280.3966600263337,24566.66808630157,595.7142857142858,834))];
-        [frames addObject:@(CGRectMake(0,26249.04804645957,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,28996.93531471764,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,31744.82258297571,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,34492.70985123378,834,1167.6))];
-        [frames addObject:@(CGRectMake(280.3966600263337,36960.20045946552,595.7142857142858,834))];
-        [frames addObject:@(CGRectMake(0,38642.58041962352,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,41390.46768788159,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,44138.35495613966,834,1167.6))];
-        [frames addObject:@(CGRectMake(0,46886.24222439773,834,1167.6))];
+        CGFloat yOffset = 0;
 
-        CGFloat scale = 2.353449184873305;
-        
+        CGSize itemSize = [[self class] itemSize];
+
         for (NSInteger row=0; row<20; row++) {
             UICollectionViewLayoutAttributes *itemAttrs = [UICollectionViewLayoutAttributes layoutAttributesForCellWithIndexPath:[NSIndexPath indexPathForRow:row inSection:0]];
-            CGRect frame = [[frames objectAtIndex:row] CGRectValue];
+            
+            CGRect frame = CGRectMake(0, yOffset, itemSize.width, itemSize.height);
+
+            // The bug appears when either:
+            //
+            // A. the frame.origin.x has a tiny tiny offset from zero
+//            frame.origin.x =  -0.00000000000011368683772161603;
+
             [itemAttrs setFrame:frame];
 
-            CGSize itemSize = frame.size;
-
-            CGAffineTransform transform = CGAffineTransformTranslate(CGAffineTransformScale(CGAffineTransformMakeTranslation(-itemSize.width/2, -itemSize.height/2), scale, scale), itemSize.width/2, itemSize.height/2);
-
-            if(row % 5 == 0){
-                transform = CGAffineTransformRotate(transform, M_PI_2);
-            }
+            // or B.
+            // the item has been rotated 180 degrees.
+            // this rotate often creates the tiny offset
+            // on the frame's origin.x
+            [itemAttrs setTransform:CGAffineTransformMakeRotation(M_PI)];
             
-            [itemAttrs setAlpha:1];
-            [itemAttrs setHidden:NO];
-            [itemAttrs setTransform:transform];
-            
+            yOffset += CGRectGetHeight(frame);
+
             [_cache addObject:itemAttrs];
         }
     }
